@@ -62,8 +62,6 @@ for t in timesteps:
         print("inflow: "+str(inflow))
         print("outflow: " + str(outflow))
 
-
-
 #Mit Massnahme: Tunnel 100 m3/s wenn outflow < 400
 lakelevellist2=[initial_lakelevel]
 outflowlist2=[initialoutflow]
@@ -79,13 +77,13 @@ for t in timesteps:
         lakelevel=f_lakelevel(addedvolume)
         outflow =float(f_outflow(lakelevel))
         if outflow < securitylevel and outflow >150:
-            outflow=outflow-tunnelcapacity
+            outflow=outflow+tunnelcapacity
         outflowvolume=outflow*deltat*3600
         addedvolume=addedvolume-outflowvolume
         lakelevel = float(f_lakelevel(addedvolume))
         outflow = float(f_outflow(lakelevel))
         if outflow < securitylevel and outflow >150:
-            outflow=outflow-tunnelcapacity
+            outflow=outflow+tunnelcapacity
         outflowlist2.append(outflow)
         lakelevellist2.append(f_lakelevel(addedvolume))
 
@@ -118,8 +116,9 @@ for t in timesteps:
 
 
 #Plot inflow-outflow
-fig.suptitle('Seespiegel feedback')
+
 fig, axs = plt.subplots(1, 2, figsize=(9, 3), sharey=False)
+fig.suptitle('Seespiegel feedback')
 axs[0].plot(inflowdf.hour, inflowdf.inflow, label="inflow")
 axs[0].plot(inflowdf.hour.values.tolist(), outflowlist, label="outflow ohne Tunnel", color="blue")
 axs[0].plot(inflowdf.hour.values.tolist(), outflowlist2, label="outflow mit Tunnel", color="red")
