@@ -14,12 +14,13 @@ timesteps=range(0,73,1) #3 days
 deltat=1 #hours
 max(timesteps)
 lakearea= 48300000
-initial_lakelevel=583
+initial_lakelevel=558
 addedvolume=0
 lakelevel=initial_lakelevel
 initialoutflow=200.0
 tunnelcapacity=100.0
 securitylevel=400.0
+timelag=24
 
 inflowdf=pd.read_excel(codespace+"/"+"inputdata.xlsx", dtype="float", engine='openpyxl', sheet_name="inflow")
 lakeleveldf=pd.read_excel(codespace+"/"+"inputdata.xlsx", dtype="float", engine='openpyxl', sheet_name="lakelevel")
@@ -37,7 +38,7 @@ f_lakelevel=interp1d(x_vol, y_vol, kind="linear")
 x_outflow=lakeleveldf.lakelevel.array
 y_outflow=lakeleveldf.outflow.array
 f_outflow=interp1d(x_outflow, y_outflow, kind="linear")
-#f_outflow(586.2)
+#f_outflow(558.2)
 
 #ohne Massnahmen
 lakelevellist=[initial_lakelevel]
@@ -76,7 +77,7 @@ for t in timesteps:
         addedvolume=addedvolume+inflowvolume
         lakelevel=f_lakelevel(addedvolume)
         outflow =float(f_outflow(lakelevel))
-        if outflow < securitylevel and outflow >150:
+        if outflow < securitylevel and outflow >150 and t > timelag:
             outflow=outflow+tunnelcapacity
         outflowvolume=outflow*deltat*3600
         addedvolume=addedvolume-outflowvolume
@@ -118,17 +119,17 @@ for t in timesteps:
 #Plot inflow-outflow
 
 fig, axs = plt.subplots(1, 2, figsize=(9, 3), sharey=False)
-fig.suptitle('Seespiegel feedback')
+fig.suptitle('lake level feedback')
 axs[0].plot(inflowdf.hour, inflowdf.inflow, label="inflow")
-axs[0].plot(inflowdf.hour.values.tolist(), outflowlist, label="outflow ohne Tunnel", color="blue")
-axs[0].plot(inflowdf.hour.values.tolist(), outflowlist2, label="outflow mit Tunnel", color="red")
-axs[0].plot(inflowdf.hour.values.tolist(), outflowlist3, label="outflow mit Erosion", color="green")
+axs[0].plot(inflowdf.hour.values.tolist(), outflowlist, label="outflow", color="blue")
+axs[0].plot(inflowdf.hour.values.tolist(), outflowlist2, label="outflow with tunnel", color="red")
+axs[0].plot(inflowdf.hour.values.tolist(), outflowlist3, label="outflow with erosion", color="green")
 axs[0].legend(loc="best")
 axs[0].set_xlabel("hour")
 axs[0].set_ylabel("inflow/outflow [m3/s]")
-axs[1].plot(inflowdf.hour.values.tolist(), lakelevellist, label="Seespiegel ohne Tunnel", color="blue")
-axs[1].plot(inflowdf.hour.values.tolist(), lakelevellist2, label="Seespiegel mit Tunnel", color="red")
-axs[1].plot(inflowdf.hour.values.tolist(), lakelevellist3, label="Seespiegel mit Erosion", color="green")
+axs[1].plot(inflowdf.hour.values.tolist(), lakelevellist, label="lake level", color="blue")
+axs[1].plot(inflowdf.hour.values.tolist(), lakelevellist2, label="lake level with tunnel", color="red")
+axs[1].plot(inflowdf.hour.values.tolist(), lakelevellist3, label="lake level with erosion", color="green")
 axs[1].legend(loc="best")
 axs[1].set_xlabel("hour")
 axs[1].set_ylabel("lake level [m a.s.l.]")
