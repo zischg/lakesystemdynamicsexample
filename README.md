@@ -9,6 +9,11 @@ The model can be used to show the effects of feedbacks, tipping points, threshol
 
 ! [influence diagram] (/assets/images/lakesystemdynamics.jpg)
 
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/zischg/lakesystemdynamicsexample/blob/main/lakesystemdynamics.png">
+  <img alt="Shows an influence diagram of the lake system example." src="https://github.com/zischg/lakesystemdynamicsexample/blob/main/lakesystemdynamics.png">
+</picture>
+
 
 
 
